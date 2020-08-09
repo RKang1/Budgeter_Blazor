@@ -1,0 +1,65 @@
+﻿@using Budgeter.Shared
+@using Budgeter.Client.Helpers
+@inject HttpClient Http
+
+@page "/Income/ExpensesOverview"
+
+<h2>Expenses Overview Page</h2>
+
+<h2>@*Income: @expenseDetails.Income*@</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>Savings</td>
+            <td>Needs</td>
+            <td>Wants</td>
+            <td>Available</td>
+        </tr>
+    </thead>
+
+    @* Just a single row table for now to make linking easier.
+        Ideally it would use somthing like a pie chart*@
+
+    @* TODO link each item to the appropriate expense page *@
+    @*<tbody>
+        <tr>
+            <td>
+                <NavLink class="nav-link" href="/ExpensesOverview/Expenses">
+                    <span class="oi" aria-hidden="true"></span>
+                    @expenseDetails.Savings
+                </NavLink>
+            </td>
+
+            <td>
+                @expenseDetails.Needs
+            </td>
+
+            <td>
+                @expenseDetails.Wants
+            </td>
+
+            <td>
+                @GetAvailable(expenseDetails)
+            </td>
+        </tr>
+    </tbody>*@
+</table>
+
+@code {
+    //ExpenseDetailsDTO expenseDetails = new ExpenseDetailsDTO();
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    expenseDetails = await Http.GetFromJsonAsync<ExpenseDetailsDTO>(Controllers.ExpenseDetails);
+    //}
+
+    //protected Decimal GetAvailable(ExpenseDetailsDTO expenseDetails)
+    //{
+    //    Decimal available = 0;
+
+    //    available = expenseDetails.Needs + expenseDetails.Wants;
+
+    //    return available;
+    //}
+}

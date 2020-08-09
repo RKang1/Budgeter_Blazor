@@ -1,0 +1,45 @@
+﻿@using Budgeter.Shared
+@using Budgeter.Client.Helpers
+@inject HttpClient Http
+
+@page "/ExpensesOverview/Expenses"
+
+<h2>Expenses Page</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>Date</td>
+            <td>Description</td>
+            <td>Amount</td>
+        </tr>
+    </thead>
+
+    <tbody>
+        @*@foreach (TransactionDTO expense in expenses)
+        {
+            <tr>
+                <td>
+                    @expense.Date.ToShortDateString()
+                </td>
+
+                <td>
+                    @expense.Description
+                </td>
+
+                <td>
+                    @expense.Amount
+                </td>
+            </tr>
+        }*@
+    </tbody>
+</table>
+
+@code {
+    //IEnumerable<TransactionDTO> expenses = Enumerable.Empty<TransactionDTO>();
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    expenses = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(Controllers.ExpenseTable);
+    //}
+}
