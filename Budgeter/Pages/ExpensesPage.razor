@@ -1,8 +1,8 @@
-﻿@using Budgeter.Shared
+﻿@using BudgeterShared 
 @using Budgeter.Client.Helpers
 @inject HttpClient Http
 
-@page "/ExpensesOverview/Expenses"
+@page "/Income/ExpensesOverview/Expenses"
 
 <h2>Expenses Page</h2>
 
@@ -16,7 +16,7 @@
     </thead>
 
     <tbody>
-        @*@foreach (TransactionDTO expense in expenses)
+        @foreach (TransactionDTO expense in expenses)
         {
             <tr>
                 <td>
@@ -31,15 +31,15 @@
                     @expense.Amount
                 </td>
             </tr>
-        }*@
+        }
     </tbody>
 </table>
 
 @code {
-    //IEnumerable<TransactionDTO> expenses = Enumerable.Empty<TransactionDTO>();
+    IEnumerable<TransactionDTO> expenses = Enumerable.Empty<TransactionDTO>();
 
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    expenses = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(Controllers.ExpenseTable);
-    //}
+    protected override async Task OnInitializedAsync()
+    {
+        expenses = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction);
+    }
 }
