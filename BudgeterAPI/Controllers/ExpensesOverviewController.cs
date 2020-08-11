@@ -11,52 +11,46 @@ namespace BudgeterAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TransactionController : ControllerBase
+    public class ExpensesOverviewController : ControllerBase
     {
-        // GET: api/<TransactionController>
+        // GET: api/<ExpensesOverviewController>
         [HttpGet]
-        public IEnumerable<TransactionDTO> Get()
+        public ExpensesOverviewDTO Get()
         {
-            List<TransactionDTO> expenses = new List<TransactionDTO>();
-
             //This is just to provide some temporary data until the database is hooked up
-            for (int i = 0; i < 10; i++)
+            //This will be calling a stored procedure that calculates the totals
+            ExpensesOverviewDTO rtn = new ExpensesOverviewDTO()
             {
-                TransactionDTO temp = new TransactionDTO()
-                {
-                    Date = DateTime.Now.AddDays(i + -10),
-                    Description = String.Concat("Item ", (i + 1)),
-                    Amount = 10 + i
-                };
-
-                expenses.Add(temp);
-            }
-
-            IEnumerable<TransactionDTO> rtn = expenses;
+                Income = 2000,
+                Savings = 500,
+                Needs= 500,
+                Wants = 1000,
+                TotalNeedsAmount = 200
+            };
 
             return rtn;
         }
 
-        // GET api/<TransactionController>/5
+        // GET api/<ExpensesOverviewController>/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/<TransactionController>
+        // POST api/<ExpensesOverviewController>
         [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT api/<TransactionController>/5
+        // PUT api/<ExpensesOverviewController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/<TransactionController>/5
+        // DELETE api/<ExpensesOverviewController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

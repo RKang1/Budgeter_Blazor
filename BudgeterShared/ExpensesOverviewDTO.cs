@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BudgeterShared
 {
-    class ExpensesOverviewDTO
+    public class ExpensesOverviewDTO
     {
         public Decimal Income { get; set; }
 
@@ -13,5 +13,7 @@ namespace BudgeterShared
         public Decimal Needs { get; set; }
 
         public Decimal Wants { get; set; }
+
+        public Decimal TotalNeedsAmount { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿@using Budgeter.Shared
+﻿@using BudgeterShared
 @using Budgeter.Client.Helpers
 @inject HttpClient Http
 
@@ -22,44 +22,35 @@
         Ideally it would use somthing like a pie chart*@
 
     @* TODO link each item to the appropriate expense page *@
-    @*<tbody>
+    <tbody>
         <tr>
             <td>
-                <NavLink class="nav-link" href="/ExpensesOverview/Expenses">
+                <NavLink class="nav-link" href="Income/ExpensesOverview/Expenses">
                     <span class="oi" aria-hidden="true"></span>
-                    @expenseDetails.Savings
+                    @expensesOverview.Savings
                 </NavLink>
             </td>
 
             <td>
-                @expenseDetails.Needs
+                @expensesOverview.Needs
             </td>
 
             <td>
-                @expenseDetails.Wants
+                @expensesOverview.Wants
             </td>
 
             <td>
-                @GetAvailable(expenseDetails)
+                @(expensesOverview.Income - (expensesOverview.Savings + expensesOverview.TotalNeedsAmount + expensesOverview.Wants))
             </td>
         </tr>
-    </tbody>*@
+    </tbody>
 </table>
 
 @code {
-    //ExpenseDetailsDTO expenseDetails = new ExpenseDetailsDTO();
+    ExpensesOverviewDTO expensesOverview = new ExpensesOverviewDTO();
 
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    expenseDetails = await Http.GetFromJsonAsync<ExpenseDetailsDTO>(Controllers.ExpenseDetails);
-    //}
-
-    //protected Decimal GetAvailable(ExpenseDetailsDTO expenseDetails)
-    //{
-    //    Decimal available = 0;
-
-    //    available = expenseDetails.Needs + expenseDetails.Wants;
-
-    //    return available;
-    //}
+    protected override async Task OnInitializedAsync()
+    {
+        expensesOverview = await Http.GetFromJsonAsync<ExpensesOverviewDTO>(ControllerRouting.ExpensesOverview);
+    }
 }
