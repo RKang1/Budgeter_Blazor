@@ -18,41 +18,27 @@ namespace BudgeterAPI.Controllers
     public class TransactionController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        string connectionString;
 
         public TransactionController(IConfiguration configuration)
         {
             _configuration = configuration;
+            connectionString = _configuration.GetConnectionString(Database.BudgeterDB);
         }
 
         // GET: api/<TransactionController>
         [HttpGet]
         public IEnumerable<TransactionDTO> Get()
         {
-            //List<TransactionDTO> expenses = new List<TransactionDTO>();
-
-            ////This is just to provide some temporary data until the database is hooked up
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    TransactionDTO temp = new TransactionDTO()
-            //    {
-            //        Date = DateTime.Now.AddDays(i + -10),
-            //        Description = String.Concat("Item ", (i + 1)),
-            //        Amount = 10 + i
-            //    };
-
-            //    expenses.Add(temp);
-            //}
-
-            //IEnumerable<TransactionDTO> rtn = expenses;
+            List<TransactionDTO> expenses = new List<TransactionDTO>();
 
             IEnumerable<TransactionDTO> rtn = Enumerable.Empty<TransactionDTO>();
 
-            string testConnection = _configuration.GetConnectionString(Database.BudgeterDB);
             string testCommand = "select * from WantExpense";
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(testConnection))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     using (SqlCommand command = new SqlCommand(testCommand, connection))
                     {
@@ -63,12 +49,22 @@ namespace BudgeterAPI.Controllers
                             {
                                 while (dataReader.Read())
                                 {
-                                    Debug.WriteLine($"{dataReader[0]}   {dataReader[1]}");
+                                    TransactionDTO temp = new TransactionDTO()
+                                    {
+                                        PurchaseDate = (DateTime)dataReader[nameof(temp.PurchaseDate)],
+                                        Description = (string)dataReader[nameof(temp.Description)],
+                                        Amount = (decimal)dataReader[nameof(temp.Amount)],
+                                        CreatedDate = (DateTime)dataReader[nameof(temp.CreatedDate)],
+                                        RevisionDate = (DateTime)dataReader[nameof(temp.RevisionDate)]
+                                    };
+                                    
+                                    expenses.Add(temp);
                                 }
                             }
                         }
                     }
                 }
+                rtn = expenses;
             }
             catch (Exception e)
             {

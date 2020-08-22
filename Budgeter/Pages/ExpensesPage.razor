@@ -12,6 +12,8 @@
             <td>Date</td>
             <td>Description</td>
             <td>Amount</td>
+            <td>Creation Date</td>
+            <td>Revision Date</td>
         </tr>
     </thead>
 
@@ -29,6 +31,14 @@
 
                 <td>
                     @expense.Amount
+                </td>
+
+                <td>
+                    @expense.CreatedDate
+                </td>
+
+                <td>
+                    @expense.RevisionDate
                 </td>
             </tr>
         }
