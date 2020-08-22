@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 
 namespace BudgeterAPI
 {
@@ -32,6 +33,8 @@ namespace BudgeterAPI
                     {
                         // This determines what sites are allowed to hit the api
                         builder.WithOrigins("https://localhost:44307");
+                        builder.AllowAnyHeader();
+                        builder.WithMethods("POST", "GET", "PUT", "DELETE");
                     });
             });
 

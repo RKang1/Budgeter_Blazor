@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using BudgeterShared;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using BudgeterAPI.Helpers;
+using BudgeterShared.DTOs;
+using BudgeterShared.Types;
+using System.Data;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,6 +36,7 @@ namespace BudgeterAPI.Controllers
 
             IEnumerable<TransactionDTO> rtn = Enumerable.Empty<TransactionDTO>();
 
+            //TODO figure out how to get rid of the string
             string testCommand = "select * from WantExpense";
 
             try
@@ -51,11 +54,12 @@ namespace BudgeterAPI.Controllers
                                 {
                                     TransactionDTO temp = new TransactionDTO()
                                     {
-                                        PurchaseDate = (DateTime)dataReader[nameof(temp.PurchaseDate)],
-                                        Description = (string)dataReader[nameof(temp.Description)],
-                                        Amount = (decimal)dataReader[nameof(temp.Amount)],
-                                        CreatedDate = (DateTime)dataReader[nameof(temp.CreatedDate)],
-                                        RevisionDate = (DateTime)dataReader[nameof(temp.RevisionDate)]
+                                        Type = (string)dataReader[nameof(TransactionDTO.Type)],
+                                        PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
+                                        Description = (string)dataReader[nameof(TransactionDTO.Description)],
+                                        Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
+                                        CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
+                                        RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
                                     };
                                     
                                     expenses.Add(temp);
@@ -83,8 +87,33 @@ namespace BudgeterAPI.Controllers
 
         // POST api/<TransactionController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] TransactionDTO transaction)
         {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand("InsertTransaction", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.AddWithValue(nameof(transaction.Type), transaction.Type);
+                        command.Parameters.AddWithValue(nameof(transaction.PurchaseDate), transaction.PurchaseDate);
+                        command.Parameters.AddWithValue(nameof(transaction.Description), transaction.Description);
+                        command.Parameters.AddWithValue(nameof(transaction.Amount), transaction.Amount);
+                        
+                        connection.Open();
+                        int rowsAffected = command.ExecuteNonQuery();
+                        Debug.WriteLine($"Rows Affected: {rowsAffected}");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Exception: {e.Message}");
+            }
+
+            Debug.WriteLine(transaction.Description);
         }
 
         // PUT api/<TransactionController>/5

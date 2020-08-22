@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Budgeter.Client.Helpers
+namespace Budgeter.Helpers
 {
     public static class ControllerRouting
     {

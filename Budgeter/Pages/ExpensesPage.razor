@@ -1,6 +1,5 @@
-﻿@using BudgeterShared 
-@using Budgeter.Client.Helpers
-@inject HttpClient Http
+﻿@inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 @page "/Income/ExpensesOverview/Expenses"
 
@@ -45,11 +44,20 @@
     </tbody>
 </table>
 
+<button class="btn btn-primary" @onclick="AddExpense">Add</button>
+
+
+
 @code {
     IEnumerable<TransactionDTO> expenses = Enumerable.Empty<TransactionDTO>();
 
     protected override async Task OnInitializedAsync()
     {
         expenses = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction);
+    }
+
+    private void AddExpense(MouseEventArgs e)
+    {
+        NavigationManager.NavigateTo("AddTransaction");
     }
 }

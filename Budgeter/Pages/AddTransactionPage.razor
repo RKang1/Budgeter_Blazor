@@ -1,0 +1,28 @@
+﻿@inject HttpClient Http
+
+@page "/AddTransaction"
+
+<h3>AddTransactionPage</h3>
+
+<EditForm Model="@transactionModel" OnValidSubmit="SubmitTransaction">
+    <InputDate id="purchaseDate" @bind-Value="transactionModel.PurchaseDate" />
+
+    <InputText id="description" @bind-Value="transactionModel.Description" />
+
+    <InputNumber id="amount" @bind-Value="transactionModel.Amount" />
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    private TransactionDTO transactionModel = new TransactionDTO()
+    {
+        Type = TransactionTypes.Expense
+    };
+
+    private async void SubmitTransaction()
+    {
+
+        await Http.PostAsJsonAsync<TransactionDTO>(ControllerRouting.Transaction, transactionModel);
+    }
+}

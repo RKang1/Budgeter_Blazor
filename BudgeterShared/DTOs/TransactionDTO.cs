@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace BudgeterShared
+namespace BudgeterShared.DTOs
 {
     public class TransactionDTO
     {
         public int Id { get; set; }
+
+        public string Type { get; set; }
 
         public DateTime PurchaseDate { get; set; }
 
