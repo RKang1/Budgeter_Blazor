@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgeterAPI", "BudgeterAPI\
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "BudgeterDB", "BudgeterDB\BudgeterDB.sqlproj", "{154AD976-3D3B-4DAE-91E1-76608BE7EBF3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RKSQL", "RLKSQL\RKSQL.csproj", "{33EB8D7E-4AB5-40D3-B077-BA8ADDD128CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{154AD976-3D3B-4DAE-91E1-76608BE7EBF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{154AD976-3D3B-4DAE-91E1-76608BE7EBF3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{154AD976-3D3B-4DAE-91E1-76608BE7EBF3}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{33EB8D7E-4AB5-40D3-B077-BA8ADDD128CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33EB8D7E-4AB5-40D3-B077-BA8ADDD128CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33EB8D7E-4AB5-40D3-B077-BA8ADDD128CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33EB8D7E-4AB5-40D3-B077-BA8ADDD128CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BudgeterShared\BudgeterShared.csproj" />
+    <ProjectReference Include="..\RLKSQL\RKSQL.csproj" />
   </ItemGroup>
 
 

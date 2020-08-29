@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using BudgeterAPI.Helpers;
 using BudgeterShared;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using RKSQL;
+using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using Microsoft.Extensions.Configuration;
-using BudgeterAPI.Helpers;
+using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,27 +28,18 @@ namespace BudgeterAPI.Controllers
         [HttpGet]
         public IEnumerable<TransactionDTO> Get()
         {
-            //List<TransactionDTO> expenses = new List<TransactionDTO>();
-
-            ////This is just to provide some temporary data until the database is hooked up
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    TransactionDTO temp = new TransactionDTO()
-            //    {
-            //        Date = DateTime.Now.AddDays(i + -10),
-            //        Description = String.Concat("Item ", (i + 1)),
-            //        Amount = 10 + i
-            //    };
-
-            //    expenses.Add(temp);
-            //}
-
-            //IEnumerable<TransactionDTO> rtn = expenses;
-
             IEnumerable<TransactionDTO> rtn = Enumerable.Empty<TransactionDTO>();
 
             string testConnection = _configuration.GetConnectionString(Database.BudgeterDB);
             string testCommand = "select * from WantExpense";
+
+            Query test = new Query()
+            {
+                CommandType = CommandTypes.Select,
+                Table = Tables.WantExpense,
+                Columns = new List<string>() { "*" }
+            };
+            Debug.WriteLine(test.PrintQuery);
 
             try
             {
@@ -57,7 +48,7 @@ namespace BudgeterAPI.Controllers
                     using (SqlCommand command = new SqlCommand(testCommand, connection))
                     {
                         connection.Open();
-                        using(SqlDataReader dataReader = command.ExecuteReader())
+                        using (SqlDataReader dataReader = command.ExecuteReader())
                         {
                             if (dataReader.HasRows)
                             {
