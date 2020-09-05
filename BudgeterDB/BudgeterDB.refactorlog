@@ -7,4 +7,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="PurchaseDate" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="569f8ed9-59ad-4c01-9b71-53e90a2f7a35" ChangeDateTime="09/05/2020 15:22:07">
+    <Property Name="ElementName" Value="[dbo].[WantExpense].[Type]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[WantExpense]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TransactionType" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="786594e3-6ac2-4132-b19b-b1e6fe2d2b67" ChangeDateTime="09/05/2020 15:28:17">
+    <Property Name="ElementName" Value="[dbo].[FK_WantExpense_TransactionType]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[WantExpense]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[FK_WantExpense_TransactionTypes]" />
+  </Operation>
 </Operations>

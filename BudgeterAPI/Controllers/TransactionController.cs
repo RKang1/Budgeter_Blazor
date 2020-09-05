@@ -8,7 +8,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using BudgeterAPI.Helpers;
 using BudgeterShared.DTOs;
-using BudgeterShared.Types;
+using BudgeterShared.Enums;
 using System.Data;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -43,28 +43,24 @@ namespace BudgeterAPI.Controllers
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand(testCommand, connection))
+                    using SqlCommand command = new SqlCommand(testCommand, connection);
+                    connection.Open();
+                    using SqlDataReader dataReader = command.ExecuteReader();
+                    if (dataReader.HasRows)
                     {
-                        connection.Open();
-                        using(SqlDataReader dataReader = command.ExecuteReader())
+                        while (dataReader.Read())
                         {
-                            if (dataReader.HasRows)
+                            TransactionDTO temp = new TransactionDTO()
                             {
-                                while (dataReader.Read())
-                                {
-                                    TransactionDTO temp = new TransactionDTO()
-                                    {
-                                        Type = (string)dataReader[nameof(TransactionDTO.Type)],
-                                        PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
-                                        Description = (string)dataReader[nameof(TransactionDTO.Description)],
-                                        Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
-                                        CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
-                                        RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
-                                    };
-                                    
-                                    expenses.Add(temp);
-                                }
-                            }
+                                Id = (int)dataReader[nameof(TransactionDTO.Id)],
+                                PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
+                                Description = (string)dataReader[nameof(TransactionDTO.Description)],
+                                Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
+                                CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
+                                RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
+                            };
+
+                            expenses.Add(temp);
                         }
                     }
                 }
@@ -80,9 +76,43 @@ namespace BudgeterAPI.Controllers
 
         // GET api/<TransactionController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public TransactionDTO Get(int id)
         {
-            return "value";
+            TransactionDTO rtn = new TransactionDTO();
+
+            //TODO figure out how to get rid of the string
+            string testCommand = $"select * from WantExpense we where we.Id = {id}";
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using SqlCommand command = new SqlCommand(testCommand, connection);
+                    connection.Open();
+                    using SqlDataReader dataReader = command.ExecuteReader();
+                    if (dataReader.HasRows)
+                    {
+                        while (dataReader.Read())
+                        {
+                            rtn = new TransactionDTO()
+                            {
+                                Id = (int)dataReader[nameof(TransactionDTO.Id)],
+                                PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
+                                Description = (string)dataReader[nameof(TransactionDTO.Description)],
+                                Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
+                                CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
+                                RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Exception: {e.Message}");
+            }
+
+            return rtn;
         }
 
         // POST api/<TransactionController>
@@ -93,14 +123,13 @@ namespace BudgeterAPI.Controllers
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand("InsertTransaction", connection))
+                    using (SqlCommand command = new SqlCommand("InsertWantExpense", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
 
-                        command.Parameters.AddWithValue(nameof(transaction.Type), transaction.Type);
-                        command.Parameters.AddWithValue(nameof(transaction.PurchaseDate), transaction.PurchaseDate);
-                        command.Parameters.AddWithValue(nameof(transaction.Description), transaction.Description);
-                        command.Parameters.AddWithValue(nameof(transaction.Amount), transaction.Amount);
+                        command.Parameters.AddWithValue(nameof(TransactionDTO.PurchaseDate), transaction.PurchaseDate);
+                        command.Parameters.AddWithValue(nameof(TransactionDTO.Description), transaction.Description);
+                        command.Parameters.AddWithValue(nameof(TransactionDTO.Amount), transaction.Amount);
                         
                         connection.Open();
                         int rowsAffected = command.ExecuteNonQuery();
@@ -112,20 +141,61 @@ namespace BudgeterAPI.Controllers
             {
                 Debug.WriteLine($"Exception: {e.Message}");
             }
-
-            Debug.WriteLine(transaction.Description);
         }
 
         // PUT api/<TransactionController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] TransactionDTO transaction)
         {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand("UpdateWantExpense", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.AddWithValue(nameof(TransactionDTO.Id), transaction.Id);
+                        command.Parameters.AddWithValue(nameof(TransactionDTO.PurchaseDate), transaction.PurchaseDate);
+                        command.Parameters.AddWithValue(nameof(TransactionDTO.Description), transaction.Description);
+                        command.Parameters.AddWithValue(nameof(TransactionDTO.Amount), transaction.Amount);
+
+                        connection.Open();
+                        int rowsAffected = command.ExecuteNonQuery();
+                        Debug.WriteLine($"Rows Affected: {rowsAffected}");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Exception: {e.Message}");
+            }
         }
 
         // DELETE api/<TransactionController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand("DeleteWantExpense", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.AddWithValue(nameof(TransactionDTO.Id), id);
+
+                        connection.Open();
+                        int rowsAffected = command.ExecuteNonQuery();
+                        Debug.WriteLine($"Rows Affected: {rowsAffected}");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Exception: {e.Message}");
+            }
         }
     }
 }

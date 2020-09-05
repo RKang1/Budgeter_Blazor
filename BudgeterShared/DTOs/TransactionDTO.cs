@@ -6,8 +6,6 @@ namespace BudgeterShared.DTOs
     {
         public int Id { get; set; }
 
-        public string Type { get; set; }
-
         public DateTime PurchaseDate { get; set; }
 
         public String Description { get; set; }

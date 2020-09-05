@@ -39,6 +39,13 @@
                 <td>
                     @expense.RevisionDate
                 </td>
+
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => EditExpense(expense.Id))">Edit</button>
+                </td>
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => DeleteExpense(expense.Id))">Delete</button>
+                </td>
             </tr>
         }
     </tbody>
@@ -60,4 +67,15 @@
     {
         NavigationManager.NavigateTo("AddTransaction");
     }
+
+    private void EditExpense(int id)
+    {
+        NavigationManager.NavigateTo($"EditTransaction/{id}");
+    }
+
+    private async Task DeleteExpense(int id)
+    {
+        await Http.DeleteAsync(ControllerRouting.Transaction + "/" + id);
+    }
+
 }
