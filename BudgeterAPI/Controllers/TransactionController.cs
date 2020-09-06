@@ -37,7 +37,7 @@ namespace BudgeterAPI.Controllers
             IEnumerable<TransactionDTO> rtn = Enumerable.Empty<TransactionDTO>();
 
             //TODO figure out how to get rid of the string
-            string testCommand = "select * from WantExpense";
+            string testCommand = "select * from Transactions";
 
             try
             {
@@ -81,7 +81,7 @@ namespace BudgeterAPI.Controllers
             TransactionDTO rtn = new TransactionDTO();
 
             //TODO figure out how to get rid of the string
-            string testCommand = $"select * from WantExpense we where we.Id = {id}";
+            string testCommand = $"select * from Transactions we where we.Id = {id}";
 
             try
             {
@@ -123,7 +123,7 @@ namespace BudgeterAPI.Controllers
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand("InsertWantExpense", connection))
+                    using (SqlCommand command = new SqlCommand("InsertTransaction", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
 
@@ -151,7 +151,7 @@ namespace BudgeterAPI.Controllers
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand("UpdateWantExpense", connection))
+                    using (SqlCommand command = new SqlCommand("UpdateTransaction", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
 
@@ -180,7 +180,7 @@ namespace BudgeterAPI.Controllers
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand("DeleteWantExpense", connection))
+                    using (SqlCommand command = new SqlCommand("DeleteTransaction", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
 

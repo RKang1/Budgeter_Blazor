@@ -65,7 +65,7 @@
 
     private async Task<IEnumerable<TransactionDTO>> GetExpenses()
     {
-        return await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Want);
+        return await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction);
     }
 
     private void AddExpense(MouseEventArgs e)

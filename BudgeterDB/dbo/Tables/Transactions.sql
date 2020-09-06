@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[WantExpense] (
+﻿CREATE TABLE [dbo].[Transactions] (
     [Id]           INT           IDENTITY (1, 1) NOT NULL,
     [PurchaseDate] DATETIME2 (7) NULL,
     [Description]  NVARCHAR (50) NULL,

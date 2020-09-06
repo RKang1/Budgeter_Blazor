@@ -1,11 +1,11 @@
-﻿CREATE PROCEDURE [dbo].[UpdateWantExpense]
+﻿CREATE PROCEDURE [dbo].[UpdateTransaction]
 	@Id Int,
 	@PurchaseDate DATETIME2,
 	@Description NVARCHAR(100),
 	@Amount MONEY
 AS
 
-UPDATE WantExpense
+UPDATE Transactions 
 SET	PurchaseDate = @PurchaseDate,
 	Description = @Description,
 	Amount = @Amount,
