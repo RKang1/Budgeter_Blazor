@@ -7,6 +7,8 @@ namespace BudgeterShared.Enums
     public enum TransactionType
     {
         Income = 1,
-        Expense = 2
+        Savings = 2,
+        Needs = 3,
+        Wants = 4
     }
 }

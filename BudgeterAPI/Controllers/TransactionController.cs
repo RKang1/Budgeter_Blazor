@@ -15,33 +15,35 @@ using System.Data;
 
 namespace BudgeterAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/{transactionType}")]
     [ApiController]
     public class TransactionController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        string connectionString;
+        private readonly string _connectionString;
 
         public TransactionController(IConfiguration configuration)
         {
             _configuration = configuration;
-            connectionString = _configuration.GetConnectionString(Database.BudgeterDB);
+            _connectionString = _configuration.GetConnectionString(Database.BudgeterDB);
         }
 
-        // GET: api/<TransactionController>
+        // GET: api/<TransactionController>/transactionType
         [HttpGet]
-        public IEnumerable<TransactionDTO> Get()
+        public IEnumerable<TransactionDTO> Get(string transactionType)
         {
-            List<TransactionDTO> expenses = new List<TransactionDTO>();
-
+            List<TransactionDTO> transactions = new List<TransactionDTO>();
+            TransactionType typeEnum;
             IEnumerable<TransactionDTO> rtn = Enumerable.Empty<TransactionDTO>();
 
+            Enum.TryParse<TransactionType>(transactionType, true, out typeEnum);
+
             //TODO figure out how to get rid of the string
-            string testCommand = "select * from Transactions";
+            string testCommand = $"select * from Transactions where TransactionType = {(int)typeEnum}";
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     using SqlCommand command = new SqlCommand(testCommand, connection);
                     connection.Open();
@@ -53,6 +55,7 @@ namespace BudgeterAPI.Controllers
                             TransactionDTO temp = new TransactionDTO()
                             {
                                 Id = (int)dataReader[nameof(TransactionDTO.Id)],
+                                TransactionType = (int)dataReader[nameof(TransactionDTO.TransactionType)],
                                 PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
                                 Description = (string)dataReader[nameof(TransactionDTO.Description)],
                                 Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
@@ -60,11 +63,11 @@ namespace BudgeterAPI.Controllers
                                 RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
                             };
 
-                            expenses.Add(temp);
+                            transactions.Add(temp);
                         }
                     }
                 }
-                rtn = expenses;
+                rtn = transactions;
             }
             catch (Exception e)
             {
@@ -74,6 +77,7 @@ namespace BudgeterAPI.Controllers
             return rtn;
         }
 
+        //TODO change this to get the id from the query
         // GET api/<TransactionController>/5
         [HttpGet("{id}")]
         public TransactionDTO Get(int id)
@@ -85,7 +89,7 @@ namespace BudgeterAPI.Controllers
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     using SqlCommand command = new SqlCommand(testCommand, connection);
                     connection.Open();
@@ -115,18 +119,19 @@ namespace BudgeterAPI.Controllers
             return rtn;
         }
 
-        // POST api/<TransactionController>
+        // POST api/<TransactionController>/transactionType
         [HttpPost]
         public void Post([FromBody] TransactionDTO transaction)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     using (SqlCommand command = new SqlCommand("InsertTransaction", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
 
+                        command.Parameters.AddWithValue(nameof(TransactionDTO.TransactionType), transaction.TransactionType);
                         command.Parameters.AddWithValue(nameof(TransactionDTO.PurchaseDate), transaction.PurchaseDate);
                         command.Parameters.AddWithValue(nameof(TransactionDTO.Description), transaction.Description);
                         command.Parameters.AddWithValue(nameof(TransactionDTO.Amount), transaction.Amount);
@@ -143,13 +148,14 @@ namespace BudgeterAPI.Controllers
             }
         }
 
+        //TODO change this to get the id from the query
         // PUT api/<TransactionController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] TransactionDTO transaction)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     using (SqlCommand command = new SqlCommand("UpdateTransaction", connection))
                     {
@@ -172,13 +178,14 @@ namespace BudgeterAPI.Controllers
             }
         }
 
+        //TODO change this to get the id from the query
         // DELETE api/<TransactionController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     using (SqlCommand command = new SqlCommand("DeleteTransaction", connection))
                     {

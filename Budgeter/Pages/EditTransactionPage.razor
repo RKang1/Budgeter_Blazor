@@ -1,7 +1,7 @@
 ﻿@inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-@page "/EditTransaction/{TransactionId}"
+@page "/EditTransaction/{transactionId:int}"
 
 <h3>EditTransactionPage</h3>
 
@@ -17,16 +17,13 @@
 
 @code {
     [Parameter]
-    public string TransactionId { get; set; }
-
-    private int TransactionIdNum;
+    public int transactionId { get; set; }
 
     private TransactionDTO transactionModel = new TransactionDTO();
 
     protected override async Task OnInitializedAsync()
     {
-        int.TryParse(TransactionId, out TransactionIdNum);
-        transactionModel = await Http.GetFromJsonAsync<TransactionDTO>(ControllerRouting.Transaction + "/" + TransactionId);
+        transactionModel = await Http.GetFromJsonAsync<TransactionDTO>(ControllerRouting.Transaction + "/" + transactionId);
     }
 
     private async void SubmitTransaction()

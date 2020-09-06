@@ -1,7 +1,7 @@
 ﻿@inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-@page "/Income/ExpensesOverview/Expenses"
+@page "/Income/ExpensesOverview/Expenses/{type}"
 
 <h2>Expenses Page</h2>
 
@@ -56,6 +56,9 @@
 
 
 @code {
+    [Parameter]
+    public string type { get; set; }
+
     IEnumerable<TransactionDTO> expenses = Enumerable.Empty<TransactionDTO>();
 
     protected override async Task OnInitializedAsync()
@@ -65,12 +68,12 @@
 
     private async Task<IEnumerable<TransactionDTO>> GetExpenses()
     {
-        return await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction);
+        return await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + "/" + type);
     }
 
     private void AddExpense(MouseEventArgs e)
     {
-        NavigationManager.NavigateTo("AddTransaction");
+        NavigationManager.NavigateTo($"AddTransaction/{type}");
     }
 
     private void EditExpense(int id)

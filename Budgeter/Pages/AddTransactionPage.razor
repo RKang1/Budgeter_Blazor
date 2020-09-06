@@ -1,7 +1,7 @@
 ﻿@inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-@page "/AddTransaction"
+@page "/AddTransaction/{type}"
 
 <h3>Add Transaction Page</h3>
 
@@ -16,12 +16,32 @@
 </EditForm>
 
 @code {
-    private TransactionDTO transactionModel = new TransactionDTO();
+    [Parameter]
+    public string type { get; set; }
+    TransactionType typeEnum;
+
+    private TransactionDTO transactionModel;
+
+    protected override void OnInitialized()
+    {
+        if (Enum.TryParse<TransactionType>(type, true, out typeEnum))
+        {
+            transactionModel = new TransactionDTO()
+            {
+                TransactionType = (int)typeEnum
+            };
+        }
+        else
+        {
+            //Todo add logging
+            System.Diagnostics.Debug.WriteLine("Invalid type on Add Transaction Page");
+        }
+    }
 
     private async void SubmitTransaction()
     {
 
-        await Http.PostAsJsonAsync<TransactionDTO>(ControllerRouting.Transaction, transactionModel);
-        NavigationManager.NavigateTo("/Income/ExpensesOverview/Expenses");
+        await Http.PostAsJsonAsync<TransactionDTO>(ControllerRouting.Transaction + "/" + type, transactionModel);
+        NavigationManager.NavigateTo($"/Income/ExpensesOverview/Expenses/{type}");
     }
 }
