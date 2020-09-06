@@ -60,7 +60,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        expenses = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction);
+        expenses = await GetExpenses();
+    }
+
+    private async Task<IEnumerable<TransactionDTO>> GetExpenses()
+    {
+        return await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Want);
     }
 
     private void AddExpense(MouseEventArgs e)
@@ -76,6 +81,7 @@
     private async Task DeleteExpense(int id)
     {
         await Http.DeleteAsync(ControllerRouting.Transaction + "/" + id);
+        expenses = await GetExpenses();
     }
 
 }
