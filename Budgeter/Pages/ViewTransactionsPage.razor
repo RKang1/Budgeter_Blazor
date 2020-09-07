@@ -1,9 +1,10 @@
 ﻿@inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-@page "/Income/ExpensesOverview/Expenses/{type}"
+@page "/"
+@page "/{type}"
 
-<h2>Expenses Page</h2>
+<h2>Transactions Page</h2>
 
 <table class="table">
     <thead>
@@ -41,17 +42,17 @@
                 </td>
 
                 <td>
-                    <button class="btn btn-primary" @onclick="(() => EditExpense(expense.Id))">Edit</button>
+                    <button class="btn btn-primary" @onclick="(() => EditTransaction(expense.Id))">Edit</button>
                 </td>
                 <td>
-                    <button class="btn btn-primary" @onclick="(() => DeleteExpense(expense.Id))">Delete</button>
+                    <button class="btn btn-primary" @onclick="(() => DeleteTransaction(expense.Id))">Delete</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-<button class="btn btn-primary" @onclick="AddExpense">Add</button>
+<button class="btn btn-primary" @onclick="AddTransaction">Add</button>
 
 @code {
     [Parameter]
@@ -59,30 +60,38 @@
 
     IEnumerable<TransactionDTO> expenses = Enumerable.Empty<TransactionDTO>();
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        expenses = await GetExpenses();
+        if (String.IsNullOrEmpty(type))
+        {
+            type = TransactionType.Income.ToString();
+        }
     }
 
-    private async Task<IEnumerable<TransactionDTO>> GetExpenses()
+    protected override async Task OnInitializedAsync()
+    {
+        expenses = await GetTransaction();
+    }
+
+    private async Task<IEnumerable<TransactionDTO>> GetTransaction()
     {
         return await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + "/?type=" + type);
     }
 
-    private void AddExpense(MouseEventArgs e)
+    private void AddTransaction(MouseEventArgs e)
     {
         NavigationManager.NavigateTo($"AddTransaction/{type}");
     }
 
-    private void EditExpense(int id)
+    private void EditTransaction(int id)
     {
         NavigationManager.NavigateTo($"EditTransaction/{type}/{id}");
     }
 
-    private async Task DeleteExpense(int id)
+    private async Task DeleteTransaction(int id)
     {
         await Http.DeleteAsync(ControllerRouting.Transaction + "/?id=" + id);
-        expenses = await GetExpenses();
+        expenses = await GetTransaction();
     }
 
 }

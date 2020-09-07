@@ -42,6 +42,6 @@
     {
 
         await Http.PostAsJsonAsync<TransactionDTO>(ControllerRouting.Transaction, transactionModel);
-        NavigationManager.NavigateTo($"/Income/ExpensesOverview/Expenses/{type}");
+        NavigationManager.NavigateTo($"/{type}");
     }
 }
