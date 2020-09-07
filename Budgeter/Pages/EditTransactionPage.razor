@@ -1,38 +1,37 @@
 ﻿@inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-@page "/EditTransaction/{type}/{transactionId:int}"
+@page "/EditTransaction/{transactionId:int}"
 
 <h3>EditTransactionPage</h3>
 
-<EditForm Model="@transactionModel" OnSubmit="SubmitTransaction">
-    <InputDate id="purchaseDate" @bind-Value="transactionModel.PurchaseDate" />
+<EditForm Model="@transaction" OnSubmit="SubmitTransaction">
+    <InputDate id="purchaseDate" @bind-Value="transaction.PurchaseDate" />
 
-    <InputText id="description" @bind-Value="transactionModel.Description" />
+    <InputText id="description" @bind-Value="transaction.Description" />
 
-    <InputNumber id="amount" @bind-Value="transactionModel.Amount" />
+    <InputNumber id="amount" @bind-Value="transaction.Amount" />
 
     <button type="submit" class="btn btn-primary">Submit</button>
 </EditForm>
 
 @code {
     [Parameter]
-    public string type { get; set; }
-
-    [Parameter]
     public int transactionId { get; set; }
 
-    private TransactionDTO transactionModel = new TransactionDTO();
+    private TransactionDTO transaction = new TransactionDTO();
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        transactionModel = await Http.GetFromJsonAsync<TransactionDTO>(ControllerRouting.Transaction + "/ById/?id=" + transactionId);
+        transaction = await Http.GetFromJsonAsync<TransactionDTO>(ControllerRouting.Transaction + $"/ById/?id={transactionId}");
     }
 
     private async void SubmitTransaction()
     {
+        await Http.PutAsJsonAsync<TransactionDTO>(ControllerRouting.Transaction, transaction);
+        
+        System.Diagnostics.Debug.WriteLine($"/{transaction.ParentId}/{((TransactionTypes)transaction.TransactionType).ToString()}");
 
-        await Http.PutAsJsonAsync<TransactionDTO>(ControllerRouting.Transaction, transactionModel);
-        NavigationManager.NavigateTo($"/{type}");
+        NavigationManager.NavigateTo($"/{transaction.ParentId}/{((TransactionTypes)transaction.TransactionType).ToString()}");
     }
 }

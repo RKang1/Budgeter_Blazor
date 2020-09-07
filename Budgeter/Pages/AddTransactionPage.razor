@@ -2,15 +2,16 @@
 @inject NavigationManager NavigationManager
 
 @page "/AddTransaction/{type}"
+@page "/AddTransaction/{type}/{parentId:int}"
 
 <h3>Add Transaction Page</h3>
 
-<EditForm Model="@transactionModel" OnSubmit="SubmitTransaction">
-    <InputDate id="purchaseDate" @bind-Value="transactionModel.PurchaseDate" />
+<EditForm Model="@transaction" OnSubmit="SubmitTransaction">
+    <InputDate id="purchaseDate" @bind-Value="transaction.PurchaseDate" />
 
-    <InputText id="description" @bind-Value="transactionModel.Description" />
+    <InputText id="description" @bind-Value="transaction.Description" />
 
-    <InputNumber id="amount" @bind-Value="transactionModel.Amount" />
+    <InputNumber id="amount" @bind-Value="transaction.Amount" />
 
     <button type="submit" class="btn btn-primary">Submit</button>
 </EditForm>
@@ -18,22 +19,29 @@
 @code {
     [Parameter]
     public string type { get; set; }
-    TransactionTypes typeEnum;
 
-    private TransactionDTO transactionModel;
+    [Parameter]
+    public int parentId { get; set; }
 
-    protected override void OnInitialized()
+
+    private TransactionDTO transaction;
+
+    protected override void OnParametersSet()
     {
+        TransactionTypes typeEnum;
+
         if (Enum.TryParse<TransactionTypes>(type, true, out typeEnum))
         {
-            transactionModel = new TransactionDTO()
+            //TODO Add validation
+            transaction = new TransactionDTO()
             {
+                ParentId = parentId,
                 TransactionType = (int)typeEnum
             };
         }
         else
         {
-            //Todo add logging
+            //TODO add logging
             System.Diagnostics.Debug.WriteLine("Invalid type on Add Transaction Page");
         }
     }
@@ -41,7 +49,7 @@
     private async void SubmitTransaction()
     {
 
-        await Http.PostAsJsonAsync<TransactionDTO>(ControllerRouting.Transaction, transactionModel);
-        NavigationManager.NavigateTo($"/{type}");
+        await Http.PostAsJsonAsync<TransactionDTO>(ControllerRouting.Transaction, transaction);
+        NavigationManager.NavigateTo($"/{parentId}/{type}");
     }
 }

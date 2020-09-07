@@ -23,11 +23,17 @@
     <tbody>
         <tr>
             <td>
-                @savings.Sum(t => t.Amount)
+                <NavLink class="nav-link" href=@($"{incomeId}/savings")>
+                    <span class="oi" aria-hidden="true"></span>
+                    @savings.Sum(t => t.Amount)
+                </NavLink>
             </td>
 
             <td>
-                @needs.Sum(t => t.Amount)
+                <NavLink class="nav-link" href=@($"{incomeId}/needs")>
+                    <span class="oi" aria-hidden="true"></span>
+                    @needs.Sum(t => t.Amount)
+                </NavLink>
             </td>
 
             <td>
@@ -38,6 +44,7 @@
             </td>
 
             <td>
+                @*TODO Add the available balance calculation*@
                 @*@(income - (expensesOverview.Savings + expensesOverview.TotalNeedsAmount + expensesOverview.Wants))*@
             </td>
         </tr>
@@ -55,13 +62,24 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        await GetWants();
         await GetIncome();
+        await GetSavings();
+        await GetNeeds();
+        await GetWants();
     }
 
     private async Task GetIncome()
     {
         income = await Http.GetFromJsonAsync<TransactionDTO>(ControllerRouting.Transaction + "/ById/?id=" + incomeId);
+    }
+    private async Task GetSavings()
+    {
+        savings = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + "/?type=" + TransactionTypes.Savings.ToString());
+    }
+
+    private async Task GetNeeds()
+    {
+        needs = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + "/?type=" + TransactionTypes.Needs.ToString());
     }
 
     private async Task GetWants()

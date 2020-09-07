@@ -2,6 +2,7 @@
 @inject NavigationManager NavigationManager
 
 @page "/"
+@page "/{parentId:int}"
 @page "/{parentId:int}/{type}"
 
 @*For Testing*@
@@ -66,13 +67,13 @@
 <button class="btn btn-primary" @onclick="GoToAddTransaction">Add</button>
 
 @code {
-        [Parameter]
-        public string type { get; set; }
+    [Parameter]
+    public string type { get; set; }
 
-        [Parameter]
-        public int parentId { get; set; }
+    [Parameter]
+    public int parentId { get; set; }
 
-        IEnumerable<TransactionDTO> transactions = Enumerable.Empty<TransactionDTO>();
+    IEnumerable<TransactionDTO> transactions = Enumerable.Empty<TransactionDTO>();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -86,30 +87,22 @@
 
     private async Task GetTransactions()
     {
-        //For Testing
-        if (parentId <= 0)
-        {
-            transactions = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + $"/?type={type}");
-        }
-        else
-        {
-            transactions = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + $"/ByParent/?parentId={parentId}&type={type}");
-        }
+        transactions = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + $"/ByParent/?parentId={parentId}&type={type}");
     }
 
     private void GoToAddTransaction(MouseEventArgs e)
     {
-        NavigationManager.NavigateTo($"AddTransaction/{type}");
+        NavigationManager.NavigateTo($"AddTransaction/{type}/{parentId}");
     }
 
     private void GoToEditTransaction(int id)
     {
-        NavigationManager.NavigateTo($"EditTransaction/{type}/{id}");
+        NavigationManager.NavigateTo($"EditTransaction/{id}");
     }
 
     private async Task DeleteTransaction(int id)
     {
-        await Http.DeleteAsync(ControllerRouting.Transaction + "/?id=" + id);
+        await Http.DeleteAsync(ControllerRouting.Transaction + $"/?id={id}");
         await GetTransactions();
     }
 

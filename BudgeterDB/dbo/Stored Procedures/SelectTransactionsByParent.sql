@@ -1,6 +1,16 @@
 ﻿CREATE PROCEDURE [dbo].[SelectTransactionsByParent]
-	@parentId INT,
-	@transactionType INT
+	@ParentId INT,
+	@TransactionType INT
 AS
-	SELECT * FROM Transactions WHERE ParentId = @parentId AND TransactionType = @transactionType
+
+IF @ParentId <= 0
+BEGIN
+	SET @ParentId = NULL
+END
+
+SELECT *
+FROM Transactions
+WHERE TransactionType = @TransactionType
+AND (ParentId IS NULL OR ParentId = @ParentId)
+
 RETURN 0

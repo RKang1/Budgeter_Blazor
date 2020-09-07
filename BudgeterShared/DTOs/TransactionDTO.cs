@@ -5,6 +5,7 @@ namespace BudgeterShared.DTOs
     public class TransactionDTO
     {
         public int Id { get; set; }
+
         public int ParentId { get; set; }
 
         public int TransactionType { get; set; }

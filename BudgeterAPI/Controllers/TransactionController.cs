@@ -63,6 +63,15 @@ namespace BudgeterAPI.Controllers
                             RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
                         };
 
+                        if (!dataReader.IsDBNull(nameof(TransactionDTO.ParentId)))
+                        {
+                            temp.ParentId = (int)dataReader[nameof(TransactionDTO.ParentId)];
+                        }
+                        else
+                        {
+                            temp.ParentId = 0;
+                        }
+
                         transactions.Add(temp);
                     }
                 }
@@ -101,12 +110,22 @@ namespace BudgeterAPI.Controllers
                         rtn = new TransactionDTO()
                         {
                             Id = (int)dataReader[nameof(TransactionDTO.Id)],
+                            TransactionType = (int)dataReader[nameof(TransactionDTO.TransactionType)],
                             PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
                             Description = (string)dataReader[nameof(TransactionDTO.Description)],
                             Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
                             CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
                             RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
                         };
+
+                        if (!dataReader.IsDBNull(nameof(TransactionDTO.ParentId)))
+                        {
+                            rtn.ParentId = (int)dataReader[nameof(TransactionDTO.ParentId)];
+                        }
+                        else
+                        {
+                            rtn.ParentId = 0;
+                        }
                     }
                 }
             }
@@ -154,9 +173,19 @@ namespace BudgeterAPI.Controllers
                             RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
                         };
 
+                        if (!dataReader.IsDBNull(nameof(TransactionDTO.ParentId)))
+                        {
+                            temp.ParentId = (int)dataReader[nameof(TransactionDTO.ParentId)];
+                        }
+                        else
+                        {
+                            temp.ParentId = 0;
+                        }
+
                         transactions.Add(temp);
                     }
                 }
+                rtn = transactions;
             }
             catch (Exception e)
             {
@@ -178,6 +207,7 @@ namespace BudgeterAPI.Controllers
                     CommandType = CommandType.StoredProcedure
                 };
 
+                command.Parameters.AddWithValue(nameof(TransactionDTO.ParentId), transaction.ParentId);
                 command.Parameters.AddWithValue(nameof(TransactionDTO.TransactionType), transaction.TransactionType);
                 command.Parameters.AddWithValue(nameof(TransactionDTO.PurchaseDate), transaction.PurchaseDate);
                 command.Parameters.AddWithValue(nameof(TransactionDTO.Description), transaction.Description);
