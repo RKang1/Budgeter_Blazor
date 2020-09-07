@@ -18,34 +18,34 @@
     </thead>
 
     <tbody>
-        @foreach (TransactionDTO expense in expenses)
+        @foreach (TransactionDTO transaction in transactions)
         {
             <tr>
                 <td>
-                    @expense.PurchaseDate.ToShortDateString()
+                    @transaction.PurchaseDate.ToShortDateString()
                 </td>
 
                 <td>
-                    @expense.Description
+                    @transaction.Description
                 </td>
 
                 <td>
-                    @expense.Amount
+                    @transaction.Amount
                 </td>
 
                 <td>
-                    @expense.CreatedDate
+                    @transaction.CreatedDate
                 </td>
 
                 <td>
-                    @expense.RevisionDate
+                    @transaction.RevisionDate
                 </td>
 
                 <td>
-                    <button class="btn btn-primary" @onclick="(() => EditTransaction(expense.Id))">Edit</button>
+                    <button class="btn btn-primary" @onclick="(() => EditTransaction(transaction.Id))">Edit</button>
                 </td>
                 <td>
-                    <button class="btn btn-primary" @onclick="(() => DeleteTransaction(expense.Id))">Delete</button>
+                    <button class="btn btn-primary" @onclick="(() => DeleteTransaction(transaction.Id))">Delete</button>
                 </td>
             </tr>
         }
@@ -58,19 +58,16 @@
     [Parameter]
     public string type { get; set; }
 
-    IEnumerable<TransactionDTO> expenses = Enumerable.Empty<TransactionDTO>();
+    IEnumerable<TransactionDTO> transactions = Enumerable.Empty<TransactionDTO>();
 
-    protected override void OnInitialized()
+    protected override async Task OnParametersSetAsync()
     {
         if (String.IsNullOrEmpty(type))
         {
             type = TransactionType.Income.ToString();
         }
-    }
 
-    protected override async Task OnInitializedAsync()
-    {
-        expenses = await GetTransaction();
+        transactions = await GetTransaction();
     }
 
     private async Task<IEnumerable<TransactionDTO>> GetTransaction()
@@ -91,7 +88,7 @@
     private async Task DeleteTransaction(int id)
     {
         await Http.DeleteAsync(ControllerRouting.Transaction + "/?id=" + id);
-        expenses = await GetTransaction();
+        transactions = await GetTransaction();
     }
 
 }
