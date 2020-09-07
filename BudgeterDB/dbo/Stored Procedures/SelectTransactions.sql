@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[SelectTransaction]
+﻿CREATE PROCEDURE [dbo].[SelectTransactions]
 	@transactionType INT
 AS
 	SELECT * FROM Transactions WHERE TransactionType = @transactionType

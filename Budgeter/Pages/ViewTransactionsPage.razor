@@ -2,6 +2,9 @@
 @inject NavigationManager NavigationManager
 
 @page "/"
+@page "/{parentId:int}/{type}"
+
+@*For Testing*@
 @page "/{type}"
 
 <h2>Transactions Page</h2>
@@ -41,9 +44,17 @@
                     @transaction.RevisionDate
                 </td>
 
+                @if (type == TransactionTypes.Income.ToString())
+                {
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => GotoExpensesOverview(transaction.Id))">Expenses</button>
+                    </td>
+                }
+
                 <td>
-                    <button class="btn btn-primary" @onclick="(() => EditTransaction(transaction.Id))">Edit</button>
+                    <button class="btn btn-primary" @onclick="(() => GoToEditTransaction(transaction.Id))">Edit</button>
                 </td>
+
                 <td>
                     <button class="btn btn-primary" @onclick="(() => DeleteTransaction(transaction.Id))">Delete</button>
                 </td>
@@ -52,35 +63,46 @@
     </tbody>
 </table>
 
-<button class="btn btn-primary" @onclick="AddTransaction">Add</button>
+<button class="btn btn-primary" @onclick="GoToAddTransaction">Add</button>
 
 @code {
-    [Parameter]
-    public string type { get; set; }
+        [Parameter]
+        public string type { get; set; }
 
-    IEnumerable<TransactionDTO> transactions = Enumerable.Empty<TransactionDTO>();
+        [Parameter]
+        public int parentId { get; set; }
+
+        IEnumerable<TransactionDTO> transactions = Enumerable.Empty<TransactionDTO>();
 
     protected override async Task OnParametersSetAsync()
     {
         if (String.IsNullOrEmpty(type))
         {
-            type = TransactionType.Income.ToString();
+            type = TransactionTypes.Income.ToString();
         }
 
-        transactions = await GetTransaction();
+        await GetTransactions();
     }
 
-    private async Task<IEnumerable<TransactionDTO>> GetTransaction()
+    private async Task GetTransactions()
     {
-        return await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + "/?type=" + type);
+        //For Testing
+        if (parentId <= 0)
+        {
+            transactions = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + $"/?type={type}");
+        }
+        else
+        {
+            transactions = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + $"/ByParent/?parentId={parentId}&type={type}");
+        }
     }
 
-    private void AddTransaction(MouseEventArgs e)
+    private void GoToAddTransaction(MouseEventArgs e)
     {
         NavigationManager.NavigateTo($"AddTransaction/{type}");
     }
 
-    private void EditTransaction(int id)
+    private void GoToEditTransaction(int id)
     {
         NavigationManager.NavigateTo($"EditTransaction/{type}/{id}");
     }
@@ -88,7 +110,11 @@
     private async Task DeleteTransaction(int id)
     {
         await Http.DeleteAsync(ControllerRouting.Transaction + "/?id=" + id);
-        transactions = await GetTransaction();
+        await GetTransactions();
     }
 
+    private void GotoExpensesOverview(int id)
+    {
+        NavigationManager.NavigateTo($"ExpensesOverview/{id}");
+    }
 }

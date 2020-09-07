@@ -18,13 +18,13 @@
 @code {
     [Parameter]
     public string type { get; set; }
-    TransactionType typeEnum;
+    TransactionTypes typeEnum;
 
     private TransactionDTO transactionModel;
 
     protected override void OnInitialized()
     {
-        if (Enum.TryParse<TransactionType>(type, true, out typeEnum))
+        if (Enum.TryParse<TransactionTypes>(type, true, out typeEnum))
         {
             transactionModel = new TransactionDTO()
             {

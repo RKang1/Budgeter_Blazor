@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BudgeterShared.Enums
 {
-    public enum TransactionType
+    public enum TransactionTypes
     {
         Income = 1,
         Savings = 2,

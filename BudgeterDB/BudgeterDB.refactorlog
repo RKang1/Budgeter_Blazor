@@ -21,4 +21,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[FK_WantExpense_TransactionTypes]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="9cc21474-cf04-4f2f-a7d5-b45acf0c220e" ChangeDateTime="09/07/2020 16:18:53">
+    <Property Name="ElementName" Value="[dbo].[SelectTransaction]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[SelectTransactions]" />
+  </Operation>
 </Operations>

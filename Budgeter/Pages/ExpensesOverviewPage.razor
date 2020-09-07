@@ -1,6 +1,6 @@
 ﻿@inject HttpClient Http
 
-@page "/Income/ExpensesOverview"
+@page "/ExpensesOverview/{incomeId:int}"
 
 <h2>Expenses Overview Page</h2>
 
@@ -23,32 +23,49 @@
     <tbody>
         <tr>
             <td>
-                <NavLink class="nav-link" href="Income/ExpensesOverview/Expenses/wants">
+                @savings.Sum(t => t.Amount)
+            </td>
+
+            <td>
+                @needs.Sum(t => t.Amount)
+            </td>
+
+            <td>
+                <NavLink class="nav-link" href=@($"{incomeId}/wants")>
                     <span class="oi" aria-hidden="true"></span>
-                    @expensesOverview.Savings
+                    @wants.Sum(t => t.Amount)
                 </NavLink>
             </td>
 
             <td>
-                @expensesOverview.Needs
-            </td>
-
-            <td>
-                @expensesOverview.Wants
-            </td>
-
-            <td>
-                @(expensesOverview.Income - (expensesOverview.Savings + expensesOverview.TotalNeedsAmount + expensesOverview.Wants))
+                @*@(income - (expensesOverview.Savings + expensesOverview.TotalNeedsAmount + expensesOverview.Wants))*@
             </td>
         </tr>
     </tbody>
 </table>
 
 @code {
-    ExpensesOverviewDTO expensesOverview = new ExpensesOverviewDTO();
+    [Parameter]
+    public int incomeId { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    TransactionDTO income = new TransactionDTO();
+    IEnumerable<TransactionDTO> savings = Enumerable.Empty<TransactionDTO>();
+    IEnumerable<TransactionDTO> needs = Enumerable.Empty<TransactionDTO>();
+    IEnumerable<TransactionDTO> wants = Enumerable.Empty<TransactionDTO>();
+
+    protected override async Task OnParametersSetAsync()
     {
-        expensesOverview = await Http.GetFromJsonAsync<ExpensesOverviewDTO>(ControllerRouting.ExpensesOverview);
+        await GetWants();
+        await GetIncome();
+    }
+
+    private async Task GetIncome()
+    {
+        income = await Http.GetFromJsonAsync<TransactionDTO>(ControllerRouting.Transaction + "/ById/?id=" + incomeId);
+    }
+
+    private async Task GetWants()
+    {
+        wants = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + "/?type=" + TransactionTypes.Wants.ToString());
     }
 }

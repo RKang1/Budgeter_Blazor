@@ -32,41 +32,38 @@ namespace BudgeterAPI.Controllers
         [HttpGet]
         public IEnumerable<TransactionDTO> Get(string type)
         {
-            List<TransactionDTO> transactions = new List<TransactionDTO>();
-            TransactionType typeEnum;
             IEnumerable<TransactionDTO> rtn = Enumerable.Empty<TransactionDTO>();
-
-            Enum.TryParse<TransactionType>(type, true, out typeEnum);
+            List<TransactionDTO> transactions = new List<TransactionDTO>();
+            Enum.TryParse<TransactionTypes>(type, true, out TransactionTypes typeEnum);
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using SqlConnection connection = new SqlConnection(_connectionString);
+                using SqlCommand command = new SqlCommand("SelectTransactions", connection)
                 {
-                    using (SqlCommand command = new SqlCommand("SelectTransaction", connection))
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.AddWithValue(nameof(TransactionDTO.TransactionType), (int)typeEnum);
+
+                connection.Open();
+                using SqlDataReader dataReader = command.ExecuteReader();
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
                     {
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue(nameof(TransactionDTO.TransactionType), (int)typeEnum);
-
-                        connection.Open();
-                        using SqlDataReader dataReader = command.ExecuteReader();
-                        if (dataReader.HasRows)
+                        TransactionDTO temp = new TransactionDTO()
                         {
-                            while (dataReader.Read())
-                            {
-                                TransactionDTO temp = new TransactionDTO()
-                                {
-                                    Id = (int)dataReader[nameof(TransactionDTO.Id)],
-                                    TransactionType = (int)dataReader[nameof(TransactionDTO.TransactionType)],
-                                    PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
-                                    Description = (string)dataReader[nameof(TransactionDTO.Description)],
-                                    Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
-                                    CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
-                                    RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
-                                };
+                            Id = (int)dataReader[nameof(TransactionDTO.Id)],
+                            TransactionType = (int)dataReader[nameof(TransactionDTO.TransactionType)],
+                            PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
+                            Description = (string)dataReader[nameof(TransactionDTO.Description)],
+                            Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
+                            CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
+                            RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
+                        };
 
-                                transactions.Add(temp);
-                            }
-                        }
+                        transactions.Add(temp);
                     }
                 }
                 rtn = transactions;
@@ -87,30 +84,77 @@ namespace BudgeterAPI.Controllers
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using SqlConnection connection = new SqlConnection(_connectionString);
+                using SqlCommand command = new SqlCommand("SelectTransactionById", connection)
                 {
-                    using (SqlCommand command = new SqlCommand("SelectTransactionById", connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue(nameof(TransactionDTO.Id), id);
+                    CommandType = CommandType.StoredProcedure
+                };
 
-                        connection.Open();
-                        using SqlDataReader dataReader = command.ExecuteReader();
-                        if (dataReader.HasRows)
+                command.Parameters.AddWithValue(nameof(TransactionDTO.Id), id);
+
+                connection.Open();
+                using SqlDataReader dataReader = command.ExecuteReader();
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        rtn = new TransactionDTO()
                         {
-                            while (dataReader.Read())
-                            {
-                                rtn = new TransactionDTO()
-                                {
-                                    Id = (int)dataReader[nameof(TransactionDTO.Id)],
-                                    PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
-                                    Description = (string)dataReader[nameof(TransactionDTO.Description)],
-                                    Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
-                                    CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
-                                    RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
-                                };
-                            }
-                        }
+                            Id = (int)dataReader[nameof(TransactionDTO.Id)],
+                            PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
+                            Description = (string)dataReader[nameof(TransactionDTO.Description)],
+                            Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
+                            CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
+                            RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
+                        };
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Exception: {e.Message}");
+            }
+
+            return rtn;
+        }
+
+        // GET api/TransactionController/ByParent/?parentId=5/type=wants
+        [HttpGet("ByParent")]
+        public IEnumerable<TransactionDTO> Get(int parentId, string type)
+        {
+            IEnumerable<TransactionDTO> rtn = Enumerable.Empty<TransactionDTO>();
+            List<TransactionDTO> transactions = new List<TransactionDTO>();
+            Enum.TryParse<TransactionTypes>(type, true, out TransactionTypes typeEnum);
+
+            try
+            {
+                using SqlConnection connection = new SqlConnection(_connectionString);
+                using SqlCommand command = new SqlCommand("SelectTransactionsByParent", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.AddWithValue(nameof(TransactionDTO.ParentId), parentId);
+                command.Parameters.AddWithValue(nameof(TransactionDTO.TransactionType), (int)typeEnum);
+
+                connection.Open();
+                using SqlDataReader dataReader = command.ExecuteReader();
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        TransactionDTO temp = new TransactionDTO()
+                        {
+                            Id = (int)dataReader[nameof(TransactionDTO.Id)],
+                            TransactionType = (int)dataReader[nameof(TransactionDTO.TransactionType)],
+                            PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
+                            Description = (string)dataReader[nameof(TransactionDTO.Description)],
+                            Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
+                            CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
+                            RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
+                        };
+
+                        transactions.Add(temp);
                     }
                 }
             }
@@ -128,22 +172,20 @@ namespace BudgeterAPI.Controllers
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using SqlConnection connection = new SqlConnection(_connectionString);
+                using SqlCommand command = new SqlCommand("InsertTransaction", connection)
                 {
-                    using (SqlCommand command = new SqlCommand("InsertTransaction", connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
+                    CommandType = CommandType.StoredProcedure
+                };
 
-                        command.Parameters.AddWithValue(nameof(TransactionDTO.TransactionType), transaction.TransactionType);
-                        command.Parameters.AddWithValue(nameof(TransactionDTO.PurchaseDate), transaction.PurchaseDate);
-                        command.Parameters.AddWithValue(nameof(TransactionDTO.Description), transaction.Description);
-                        command.Parameters.AddWithValue(nameof(TransactionDTO.Amount), transaction.Amount);
-                        
-                        connection.Open();
-                        int rowsAffected = command.ExecuteNonQuery();
-                        Debug.WriteLine($"Rows Affected: {rowsAffected}");
-                    }
-                }
+                command.Parameters.AddWithValue(nameof(TransactionDTO.TransactionType), transaction.TransactionType);
+                command.Parameters.AddWithValue(nameof(TransactionDTO.PurchaseDate), transaction.PurchaseDate);
+                command.Parameters.AddWithValue(nameof(TransactionDTO.Description), transaction.Description);
+                command.Parameters.AddWithValue(nameof(TransactionDTO.Amount), transaction.Amount);
+
+                connection.Open();
+                int rowsAffected = command.ExecuteNonQuery();
+                Debug.WriteLine($"Rows Affected: {rowsAffected}");
             }
             catch (Exception e)
             {
@@ -157,22 +199,20 @@ namespace BudgeterAPI.Controllers
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using SqlConnection connection = new SqlConnection(_connectionString);
+                using SqlCommand command = new SqlCommand("UpdateTransaction", connection)
                 {
-                    using (SqlCommand command = new SqlCommand("UpdateTransaction", connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
+                    CommandType = CommandType.StoredProcedure
+                };
 
-                        command.Parameters.AddWithValue(nameof(TransactionDTO.Id), transaction.Id);
-                        command.Parameters.AddWithValue(nameof(TransactionDTO.PurchaseDate), transaction.PurchaseDate);
-                        command.Parameters.AddWithValue(nameof(TransactionDTO.Description), transaction.Description);
-                        command.Parameters.AddWithValue(nameof(TransactionDTO.Amount), transaction.Amount);
+                command.Parameters.AddWithValue(nameof(TransactionDTO.Id), transaction.Id);
+                command.Parameters.AddWithValue(nameof(TransactionDTO.PurchaseDate), transaction.PurchaseDate);
+                command.Parameters.AddWithValue(nameof(TransactionDTO.Description), transaction.Description);
+                command.Parameters.AddWithValue(nameof(TransactionDTO.Amount), transaction.Amount);
 
-                        connection.Open();
-                        int rowsAffected = command.ExecuteNonQuery();
-                        Debug.WriteLine($"Rows Affected: {rowsAffected}");
-                    }
-                }
+                connection.Open();
+                int rowsAffected = command.ExecuteNonQuery();
+                Debug.WriteLine($"Rows Affected: {rowsAffected}");
             }
             catch (Exception e)
             {
@@ -186,19 +226,17 @@ namespace BudgeterAPI.Controllers
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using SqlConnection connection = new SqlConnection(_connectionString);
+                using SqlCommand command = new SqlCommand("DeleteTransaction", connection)
                 {
-                    using (SqlCommand command = new SqlCommand("DeleteTransaction", connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
+                    CommandType = CommandType.StoredProcedure
+                };
 
-                        command.Parameters.AddWithValue(nameof(TransactionDTO.Id), id);
+                command.Parameters.AddWithValue(nameof(TransactionDTO.Id), id);
 
-                        connection.Open();
-                        int rowsAffected = command.ExecuteNonQuery();
-                        Debug.WriteLine($"Rows Affected: {rowsAffected}");
-                    }
-                }
+                connection.Open();
+                int rowsAffected = command.ExecuteNonQuery();
+                Debug.WriteLine($"Rows Affected: {rowsAffected}");
             }
             catch (Exception e)
             {

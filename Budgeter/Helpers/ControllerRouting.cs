@@ -8,7 +8,5 @@ namespace Budgeter.Helpers
     public static class ControllerRouting
     {
         public static string Transaction = "https://localhost:44304/api/Transaction";
-
-        public static string ExpensesOverview = "https://localhost:44304/api/ExpensesOverview";
     }
 }
