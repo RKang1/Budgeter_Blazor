@@ -53,8 +53,6 @@
 
 <button class="btn btn-primary" @onclick="AddExpense">Add</button>
 
-
-
 @code {
     [Parameter]
     public string type { get; set; }
@@ -68,7 +66,7 @@
 
     private async Task<IEnumerable<TransactionDTO>> GetExpenses()
     {
-        return await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + "/" + type);
+        return await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + "/?type=" + type);
     }
 
     private void AddExpense(MouseEventArgs e)
@@ -78,12 +76,12 @@
 
     private void EditExpense(int id)
     {
-        NavigationManager.NavigateTo($"EditTransaction/{id}");
+        NavigationManager.NavigateTo($"EditTransaction/{type}/{id}");
     }
 
     private async Task DeleteExpense(int id)
     {
-        await Http.DeleteAsync(ControllerRouting.Transaction + "/" + id);
+        await Http.DeleteAsync(ControllerRouting.Transaction + "/?id=" + id);
         expenses = await GetExpenses();
     }
 

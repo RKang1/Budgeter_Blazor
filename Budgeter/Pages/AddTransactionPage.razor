@@ -41,7 +41,7 @@
     private async void SubmitTransaction()
     {
 
-        await Http.PostAsJsonAsync<TransactionDTO>(ControllerRouting.Transaction + "/" + type, transactionModel);
+        await Http.PostAsJsonAsync<TransactionDTO>(ControllerRouting.Transaction, transactionModel);
         NavigationManager.NavigateTo($"/Income/ExpensesOverview/Expenses/{type}");
     }
 }

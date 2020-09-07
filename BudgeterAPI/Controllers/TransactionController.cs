@@ -15,7 +15,7 @@ using System.Data;
 
 namespace BudgeterAPI.Controllers
 {
-    [Route("api/[controller]/{transactionType}")]
+    [Route("api/[controller]")]
     [ApiController]
     public class TransactionController : ControllerBase
     {
@@ -28,15 +28,15 @@ namespace BudgeterAPI.Controllers
             _connectionString = _configuration.GetConnectionString(Database.BudgeterDB);
         }
 
-        // GET: api/<TransactionController>/transactionType
+        // GET: api/TransactionController/?type=wants
         [HttpGet]
-        public IEnumerable<TransactionDTO> Get(string transactionType)
+        public IEnumerable<TransactionDTO> Get(string type)
         {
             List<TransactionDTO> transactions = new List<TransactionDTO>();
             TransactionType typeEnum;
             IEnumerable<TransactionDTO> rtn = Enumerable.Empty<TransactionDTO>();
 
-            Enum.TryParse<TransactionType>(transactionType, true, out typeEnum);
+            Enum.TryParse<TransactionType>(type, true, out typeEnum);
 
             try
             {
@@ -79,9 +79,8 @@ namespace BudgeterAPI.Controllers
             return rtn;
         }
 
-        //TODO change this to get the id from the query
-        // GET api/<TransactionController>/5
-        [HttpGet("{id}")]
+        // GET api/TransactionController/ById/?id=5
+        [HttpGet("ById")]
         public TransactionDTO Get(int id)
         {
             TransactionDTO rtn = new TransactionDTO();
@@ -123,7 +122,7 @@ namespace BudgeterAPI.Controllers
             return rtn;
         }
 
-        // POST api/<TransactionController>/transactionType
+        // POST api/TransactionController
         [HttpPost]
         public void Post([FromBody] TransactionDTO transaction)
         {
@@ -152,10 +151,9 @@ namespace BudgeterAPI.Controllers
             }
         }
 
-        //TODO change this to get the id from the query
-        // PUT api/<TransactionController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] TransactionDTO transaction)
+        // PUT api/TransactionController
+        [HttpPut]
+        public void Put([FromBody] TransactionDTO transaction)
         {
             try
             {
@@ -182,9 +180,8 @@ namespace BudgeterAPI.Controllers
             }
         }
 
-        //TODO change this to get the id from the query
-        // DELETE api/<TransactionController>/5
-        [HttpDelete("{id}")]
+        // DELETE api/TransactionController/?id=5
+        [HttpDelete]
         public void Delete(int id)
         {
             try
