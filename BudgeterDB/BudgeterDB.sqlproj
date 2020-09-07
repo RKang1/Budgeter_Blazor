@@ -78,6 +78,8 @@
     <Build Include="Security\RoleMemberships.sql" />
     <Build Include="dbo\Stored Procedures\UpdateTransaction.sql" />
     <Build Include="dbo\Stored Procedures\DeleteTransaction.sql" />
+    <Build Include="dbo\Stored Procedures\SelectTransaction.sql" />
+    <Build Include="dbo\Stored Procedures\SelectTransactionById.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BudgeterDB.publish.xml" />

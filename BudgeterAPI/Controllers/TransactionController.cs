@@ -38,32 +38,34 @@ namespace BudgeterAPI.Controllers
 
             Enum.TryParse<TransactionType>(transactionType, true, out typeEnum);
 
-            //TODO figure out how to get rid of the string
-            string testCommand = $"select * from Transactions where TransactionType = {(int)typeEnum}";
-
             try
             {
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    using SqlCommand command = new SqlCommand(testCommand, connection);
-                    connection.Open();
-                    using SqlDataReader dataReader = command.ExecuteReader();
-                    if (dataReader.HasRows)
+                    using (SqlCommand command = new SqlCommand("SelectTransaction", connection))
                     {
-                        while (dataReader.Read())
-                        {
-                            TransactionDTO temp = new TransactionDTO()
-                            {
-                                Id = (int)dataReader[nameof(TransactionDTO.Id)],
-                                TransactionType = (int)dataReader[nameof(TransactionDTO.TransactionType)],
-                                PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
-                                Description = (string)dataReader[nameof(TransactionDTO.Description)],
-                                Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
-                                CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
-                                RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
-                            };
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue(nameof(TransactionDTO.TransactionType), (int)typeEnum);
 
-                            transactions.Add(temp);
+                        connection.Open();
+                        using SqlDataReader dataReader = command.ExecuteReader();
+                        if (dataReader.HasRows)
+                        {
+                            while (dataReader.Read())
+                            {
+                                TransactionDTO temp = new TransactionDTO()
+                                {
+                                    Id = (int)dataReader[nameof(TransactionDTO.Id)],
+                                    TransactionType = (int)dataReader[nameof(TransactionDTO.TransactionType)],
+                                    PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
+                                    Description = (string)dataReader[nameof(TransactionDTO.Description)],
+                                    Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
+                                    CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
+                                    RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
+                                };
+
+                                transactions.Add(temp);
+                            }
                         }
                     }
                 }
@@ -84,29 +86,31 @@ namespace BudgeterAPI.Controllers
         {
             TransactionDTO rtn = new TransactionDTO();
 
-            //TODO figure out how to get rid of the string
-            string testCommand = $"select * from Transactions we where we.Id = {id}";
-
             try
             {
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    using SqlCommand command = new SqlCommand(testCommand, connection);
-                    connection.Open();
-                    using SqlDataReader dataReader = command.ExecuteReader();
-                    if (dataReader.HasRows)
+                    using (SqlCommand command = new SqlCommand("SelectTransactionById", connection))
                     {
-                        while (dataReader.Read())
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue(nameof(TransactionDTO.Id), id);
+
+                        connection.Open();
+                        using SqlDataReader dataReader = command.ExecuteReader();
+                        if (dataReader.HasRows)
                         {
-                            rtn = new TransactionDTO()
+                            while (dataReader.Read())
                             {
-                                Id = (int)dataReader[nameof(TransactionDTO.Id)],
-                                PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
-                                Description = (string)dataReader[nameof(TransactionDTO.Description)],
-                                Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
-                                CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
-                                RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
-                            };
+                                rtn = new TransactionDTO()
+                                {
+                                    Id = (int)dataReader[nameof(TransactionDTO.Id)],
+                                    PurchaseDate = (DateTime)dataReader[nameof(TransactionDTO.PurchaseDate)],
+                                    Description = (string)dataReader[nameof(TransactionDTO.Description)],
+                                    Amount = (decimal)dataReader[nameof(TransactionDTO.Amount)],
+                                    CreatedDate = (DateTime)dataReader[nameof(TransactionDTO.CreatedDate)],
+                                    RevisionDate = (DateTime)dataReader[nameof(TransactionDTO.RevisionDate)]
+                                };
+                            }
                         }
                     }
                 }
