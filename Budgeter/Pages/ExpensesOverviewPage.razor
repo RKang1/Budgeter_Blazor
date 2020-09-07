@@ -1,6 +1,4 @@
-﻿@using BudgeterShared
-@using Budgeter.Client.Helpers
-@inject HttpClient Http
+﻿@inject HttpClient Http
 
 @page "/Income/ExpensesOverview"
 
@@ -25,7 +23,7 @@
     <tbody>
         <tr>
             <td>
-                <NavLink class="nav-link" href="Income/ExpensesOverview/Expenses">
+                <NavLink class="nav-link" href="Income/ExpensesOverview/Expenses/wants">
                     <span class="oi" aria-hidden="true"></span>
                     @expensesOverview.Savings
                 </NavLink>

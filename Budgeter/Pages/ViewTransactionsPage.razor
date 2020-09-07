@@ -1,0 +1,97 @@
+﻿@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@page "/"
+@page "/{type}"
+
+<h2>Transactions Page</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>Date</td>
+            <td>Description</td>
+            <td>Amount</td>
+            <td>Creation Date</td>
+            <td>Revision Date</td>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (TransactionDTO expense in expenses)
+        {
+            <tr>
+                <td>
+                    @expense.PurchaseDate.ToShortDateString()
+                </td>
+
+                <td>
+                    @expense.Description
+                </td>
+
+                <td>
+                    @expense.Amount
+                </td>
+
+                <td>
+                    @expense.CreatedDate
+                </td>
+
+                <td>
+                    @expense.RevisionDate
+                </td>
+
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => EditTransaction(expense.Id))">Edit</button>
+                </td>
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => DeleteTransaction(expense.Id))">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<button class="btn btn-primary" @onclick="AddTransaction">Add</button>
+
+@code {
+    [Parameter]
+    public string type { get; set; }
+
+    IEnumerable<TransactionDTO> expenses = Enumerable.Empty<TransactionDTO>();
+
+    protected override void OnInitialized()
+    {
+        if (String.IsNullOrEmpty(type))
+        {
+            type = TransactionType.Income.ToString();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        expenses = await GetTransaction();
+    }
+
+    private async Task<IEnumerable<TransactionDTO>> GetTransaction()
+    {
+        return await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + "/?type=" + type);
+    }
+
+    private void AddTransaction(MouseEventArgs e)
+    {
+        NavigationManager.NavigateTo($"AddTransaction/{type}");
+    }
+
+    private void EditTransaction(int id)
+    {
+        NavigationManager.NavigateTo($"EditTransaction/{type}/{id}");
+    }
+
+    private async Task DeleteTransaction(int id)
+    {
+        await Http.DeleteAsync(ControllerRouting.Transaction + "/?id=" + id);
+        expenses = await GetTransaction();
+    }
+
+}

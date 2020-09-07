@@ -338,5 +338,16 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
 /BudgeterAPI/appsettings.json
 /BudgeterAPI/appsettings.Development.json
+/BudgeterAPI/Properties/launchSettings.json
+/BudgeterDB/Security/DESKTOP-C6CONOB_Richard.sql
+/BudgeterDB/Security/BudgeterDB_User.sql
+/BudgeterDB/Security/BudgeterDB_User_1.sql
+/BudgeterDB/Security/NT Service_MSSQLSERVER.sql
+/BudgeterDB/Security/NT SERVICE_SQLSERVERAGENT.sql
+/BudgeterDB/Security/NT SERVICE_SQLWriter.sql
+/BudgeterDB/Security/NT SERVICE_Winmgmt.sql
+/BudgeterDB/Security/RoleMemberships.sql
+/BudgeterDB/Security/sa.sql

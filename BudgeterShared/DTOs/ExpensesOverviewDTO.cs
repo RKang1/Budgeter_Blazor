@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BudgeterShared
+namespace BudgeterShared.DTOs
 {
     public class ExpensesOverviewDTO
     {
