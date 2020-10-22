@@ -72,6 +72,9 @@
     {
         income = await Http.GetFromJsonAsync<TransactionDTO>(ControllerRouting.Transaction + "/ById/?id=" + incomeId);
     }
+
+    // TODO get expenses by type and parent id
+
     private async Task GetSavings()
     {
         savings = await Http.GetFromJsonAsync<IEnumerable<TransactionDTO>>(ControllerRouting.Transaction + "/?type=" + TransactionTypes.Savings.ToString());
